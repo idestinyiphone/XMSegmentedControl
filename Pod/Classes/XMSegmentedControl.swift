@@ -325,6 +325,13 @@ open class XMSegmentedControl: UIView {
 
                 tab.tag = i
                 tab.addTarget(self, action: #selector(XMSegmentedControl.segmentPressed(_:)), for: .touchUpInside)
+                
+                if #available(iOS 9.0, *) {
+                    tab.semanticContentAttribute = .forceLeftToRight
+                } else {
+                    // Fallback on earlier versions
+                }
+                
                 self.addSubview(tab)
             }
         }
