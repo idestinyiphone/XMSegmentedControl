@@ -64,7 +64,7 @@ open class XMSegmentedControl: UIView {
      Defines the height of the highlighted edge if `selectedItemHighlightStyle` is either `TopEdge` or `BottomEdge`
      - Note: Changes only take place if `selectedItemHighlightStyle` is either `TopEdge` or `BottomEdge`
      */
-    open var edgeHighlightHeight: CGFloat = 5.0
+    open var edgeHighlightHeight: CGFloat = 10.0
     
     /// Changes the background of the selected segment.
     @IBInspectable open var highlightColor = UIColor(red: 42/255, green: 132/255, blue: 210/255, alpha: 1) {
@@ -160,7 +160,7 @@ open class XMSegmentedControl: UIView {
             func isUIButton(_ view: UIView) -> Bool {
                 return view is UIButton ? true : false
             }
-            UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: UIViewAnimationOptions.curveEaseOut, animations: {
+            UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: UIView.AnimationOptions.curveEaseOut, animations: {
                 switch(self.contentType) {
                 case .icon, .hybrid, .hybridVertical:
                     ((self.subviews.filter(isUIButton)) as! [UIButton]).forEach {
@@ -174,10 +174,10 @@ open class XMSegmentedControl: UIView {
                 case .text:
                     ((self.subviews.filter(isUIButton)) as! [UIButton]).forEach {
                         if $0.tag == self.selectedSegment {
-                            $0.setTitleColor(self.highlightTint, for: UIControlState())
+                            $0.setTitleColor(self.highlightTint, for: UIControl.State())
                             self.highlightView.frame.origin.x = $0.frame.origin.x
                         } else {
-                            $0.setTitleColor(self.tint, for: UIControlState())
+                            $0.setTitleColor(self.tint, for: UIControl.State())
                         }
                     }
                 }
@@ -191,7 +191,7 @@ open class XMSegmentedControl: UIView {
      Sets the font for the text displayed in the segmented control if `contentType` is `Text`
      - Note: Changes only take place if `contentType` is `Text`
      */
-    open var font = UIFont(name: "AvenirNext-DemiBold", size: 15)!
+    open var font = UIFont(name: "Poppins-Medium", size: 22)!
     
     /// Sets the segmented control selected item highlight style to `Background`, `TopEdge` or `BottomEdge`.
     open var selectedItemHighlightStyle: XMSelectedItemHighlightStyle = .background
@@ -274,27 +274,27 @@ open class XMSegmentedControl: UIView {
         func addSegments(startingPosition starting: CGFloat, sections: Int, width: CGFloat, height: CGFloat) {
             for i in 0..<sections {
                 let frame = CGRect(x: starting + (CGFloat(i) * width), y: 0, width: width, height: height)
-                let tab = UIButton(type: UIButtonType.system)
+                let tab = UIButton(type: UIButton.ButtonType.system)
                 tab.frame = frame
                 
                 switch contentType {
                 case .icon:
-                    tab.imageEdgeInsets = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
-                    tab.imageView?.contentMode = UIViewContentMode.scaleAspectFit
+                    tab.imageEdgeInsets = UIEdgeInsets(top: 10, left: 5, bottom: 5, right: 5)
+                    tab.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
                     tab.tintColor = i == selectedSegment ? highlightTint : tint
-                    tab.setImage(segmentIcon[i], for: UIControlState())
+                    tab.setImage(segmentIcon[i], for: UIControl.State())
                 case .text:
-                    tab.setTitle(segmentTitle[i], for: UIControlState())
-                    tab.setTitleColor(i == selectedSegment ? highlightTint : tint, for: UIControlState())
+                    tab.setTitle(segmentTitle[i], for: UIControl.State())
+                    tab.setTitleColor(i == selectedSegment ? highlightTint : tint, for: UIControl.State())
                     tab.titleLabel?.font = font
                 case .hybrid:
                     let insetAmount: CGFloat = 8 / 2.0
-                    tab.imageEdgeInsets = UIEdgeInsetsMake(12, -insetAmount, 12, insetAmount)
-                    tab.titleEdgeInsets = UIEdgeInsetsMake(0, insetAmount*2, 0, 0)
-                    tab.contentEdgeInsets = UIEdgeInsetsMake(0, insetAmount, 0, insetAmount)
+                    tab.imageEdgeInsets = UIEdgeInsets(top: 10, left: -insetAmount, bottom: 10, right: insetAmount)
+                    tab.titleEdgeInsets = UIEdgeInsets(top: 0, left: insetAmount*2, bottom: 0, right: 0)
+                    tab.contentEdgeInsets = UIEdgeInsets(top: 0, left: insetAmount, bottom: 0, right: insetAmount)
                     tab.contentHorizontalAlignment = .center
-                    tab.setTitle(segmentContent.text[i], for: UIControlState())
-                    tab.setImage(segmentContent.icon[i], for: UIControlState())
+                    tab.setTitle(segmentContent.text[i], for: UIControl.State())
+                    tab.setImage(segmentContent.icon[i], for: UIControl.State())
                     tab.titleLabel?.font = font
                     tab.imageView?.contentMode = .scaleAspectFit
                     tab.tintColor = i == selectedSegment ? highlightTint : tint
@@ -304,13 +304,13 @@ open class XMSegmentedControl: UIView {
                     let text: String = segmentContent.text[i]
 
                     let halfSizeFont = UIFont(name: font.fontName, size: font.pointSize / 2.0)
-                    let textSize = NSString(string: text).size(attributes: [NSFontAttributeName: halfSizeFont])
+                    let textSize = NSString(string: text).size(withAttributes: [NSAttributedString.Key.font: halfSizeFont])
 
-                    let spacing: CGFloat = 12
+                    let spacing: CGFloat = 6
                     let imageHorizontalInset: CGFloat = (width - imageSize.width)/2
 
-                    tab.imageEdgeInsets = UIEdgeInsetsMake(spacing, imageHorizontalInset, spacing + textSize.height + edgeHighlightHeight, imageHorizontalInset)
-                    tab.titleEdgeInsets = UIEdgeInsetsMake(spacing, -imageSize.width, -imageSize.height + spacing, 0)
+                    tab.imageEdgeInsets = UIEdgeInsets(top: spacing, left: imageHorizontalInset, bottom: spacing + textSize.height + edgeHighlightHeight, right: imageHorizontalInset)
+                    tab.titleEdgeInsets = UIEdgeInsets(top: spacing, left: -imageSize.width, bottom: -imageSize.height + spacing, right: 0)
                     tab.contentEdgeInsets = UIEdgeInsets.zero
                     tab.contentHorizontalAlignment = .center
                     tab.contentVerticalAlignment = .center
@@ -325,13 +325,11 @@ open class XMSegmentedControl: UIView {
 
                 tab.tag = i
                 tab.addTarget(self, action: #selector(XMSegmentedControl.segmentPressed(_:)), for: .touchUpInside)
-                
                 if #available(iOS 9.0, *) {
                     tab.semanticContentAttribute = .forceLeftToRight
                 } else {
                     // Fallback on earlier versions
                 }
-                
                 self.addSubview(tab)
             }
         }
@@ -340,10 +338,12 @@ open class XMSegmentedControl: UIView {
             switch selectedItemHighlightStyle {
             case .background:
                 highlightView = UIView(frame: CGRect(x: starting, y: 0, width: width, height: frame.height))
+                highlightView.layer.cornerRadius = 30.0
             case .topEdge:
                 highlightView = UIView(frame: CGRect(x: starting, y: 0, width: width, height: edgeHighlightHeight))
             case .bottomEdge:
                 highlightView = UIView(frame: CGRect(x: starting, y: frame.height - edgeHighlightHeight, width: width, height: edgeHighlightHeight))
+                highlightView.layer.cornerRadius = highlightView.frame.height/2
             }
 
             highlightView.backgroundColor = highlightColor
